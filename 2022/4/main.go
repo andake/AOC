@@ -39,7 +39,7 @@ func contains(assign1, assign2 []string) bool {
 
 func overlaps(assign1, assign2 []string) bool {
 	low1, high1, low2, high2 := highLow(assign1, assign2)
-	return high1 == low2 || high2 == low1 || (high1 >= low2 && high1 <= high2) || (high2 >= low1 && high2 <= high1)
+	return (high1 >= low2 && high1 <= high2) || (high2 >= low1 && high2 <= high1)
 }
 
 func highLow(assign1, assign2 []string) (int, int, int, int) {
