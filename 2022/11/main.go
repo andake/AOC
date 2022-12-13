@@ -38,7 +38,6 @@ func (m *monkey) addItem(i item) {
 
 func (m *monkey) inspect() {
 	m.inspects = m.inspects + 1
-	old := m.items[0].wl
 	over := new(big.Int).SetUint64(m.items[0].wl)
 	if strings.Contains(m.oper, "+") {
 		pv, _ := strconv.ParseUint(strings.TrimSpace(strings.Split(m.oper, "+")[1]), 10, 64)
@@ -55,28 +54,19 @@ func (m *monkey) inspect() {
 			m.items[0].wl = over.Uint64()
 		}
 	}
-
-	if m.items[0].wl < old {
-		diff := new(big.Int).SetUint64(0)
-		diff = diff.Sub(over, new(big.Int).SetUint64(old))
-		h := over.Mod(over, new(big.Int).SetUint64(m.test))
-		if h.Cmp(new(big.Int).SetUint64(0)) == 0 {
-			m.items[0].wl = m.test
-		} else {
-			m.items[0].wl = m.test + over.Uint64()
-		}
-
-	}
 }
 
-func (m *monkey) bored(i int) {
+func (m *monkey) bored() {
 	m.items[0].wl = m.items[0].wl / 3
 }
 
-func (m *monkey) throw() {
+func (m *monkey) throw(bored bool) {
 	i := m.items[0]
 	m.items = m.items[1:]
 	s := *m.monkeys
+	if !bored {
+		i.wl = i.wl % 9699690
+	}
 	if i.wl%m.test == 0 {
 		s[m.tm].addItem(i)
 	} else {
@@ -120,8 +110,8 @@ func problem1(inputs []string) {
 			length := len(m.items)
 			for y := 0; y < length; y++ {
 				m.inspect()
-				m.bored(3)
-				m.throw()
+				m.bored()
+				m.throw(true)
 			}
 		}
 	}
@@ -171,12 +161,12 @@ func problem2(inputs []string) {
 		}
 	}
 
-	for i := 0; i < 20; i++ {
+	for i := 0; i < 10000; i++ {
 		for _, m := range monkeys {
 			length := len(m.items)
 			for y := 0; y < length; y++ {
 				m.inspect()
-				m.throw()
+				m.throw(false)
 			}
 		}
 	}
