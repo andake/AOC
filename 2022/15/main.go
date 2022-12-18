@@ -65,8 +65,107 @@ func problem1(inputs []string) {
 	println(c)
 }
 
-func problem2(inputs []string) {
+type coordmd struct {
+	x  int
+	y  int
+	md int
+}
 
+func problem2(inputs []string) {
+	coords := make([]coordmd, 0)
+	for _, row := range inputs {
+		var sx int
+		var sy int
+		var bx int
+		var by int
+
+		fmt.Sscanf(row, "Sensor at x=%d, y=%d: closest beacon is at x=%d, y=%d", &sx, &sy, &bx, &by)
+
+		md := int(math.Abs(float64(sx-bx)) + math.Abs(float64(sy-by)))
+		c := coordmd{sx, sy, md}
+		coords = append(coords, c)
+	}
+
+	xg := 0
+	yg := 0
+	limit := 4000000
+Loop:
+	for _, c := range coords {
+		for x, y := c.x-c.md-1, c.y; x <= c.x; x, y = x+1, y-1 {
+			if x >= 0 && x <= limit && y >= 0 && y <= limit {
+				for pos, c2 := range coords {
+					if !included(x, y, c2) {
+						//println("res", x, y)
+						if pos == len(coords)-1 {
+							println("res", x, y)
+							xg = x
+							yg = y
+							break Loop
+						}
+					} else {
+						break
+					}
+				}
+			}
+		}
+		for x, y := c.x+c.md+1, c.y; x >= c.x; x, y = x-1, y-1 {
+			if x >= 0 && x <= limit && y >= 0 && y <= limit {
+				for pos, c2 := range coords {
+					if !included(x, y, c2) {
+						if pos == len(coords)-1 {
+							println("blaa3")
+							println("res", x, y)
+							xg = x
+							yg = y
+							break Loop
+						}
+					} else {
+						break
+					}
+				}
+			}
+		}
+		for x, y := c.x+c.md+1, c.y; x >= c.x; x, y = x-1, y+1 {
+			if x >= 0 && x <= limit && y >= 0 && y <= limit {
+				for pos, c2 := range coords {
+					if !included(x, y, c2) {
+						if pos == len(coords)-1 {
+							println("res", x, y)
+							xg = x
+							yg = y
+							break Loop
+						}
+					} else {
+						break
+					}
+				}
+			}
+		}
+		for x, y := c.x-c.md-1, c.y; x <= c.x; x, y = x+1, y+1 {
+			if x >= 0 && x <= limit && y >= 0 && y <= limit {
+				for pos, c2 := range coords {
+					if !included(x, y, c2) {
+						if pos == len(coords)-1 {
+							println("res", x, y)
+							xg = x
+							yg = y
+							break Loop
+						}
+					} else {
+						break
+					}
+				}
+			}
+		}
+	}
+
+	println(xg*4000000 + yg)
+}
+
+func included(x, y int, c coordmd) bool {
+	//println("c.md: ", c.md)
+	// println("xy md: ", int(math.Abs(float64(x-c.x))+math.Abs(float64(y-c.y))))
+	return c.md >= int(math.Abs(float64(x-c.x))+math.Abs(float64(y-c.y)))
 }
 
 func readInput() []string {
