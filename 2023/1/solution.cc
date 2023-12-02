@@ -73,7 +73,6 @@ void solution2() {
   };
 
   auto sum = 0;
-  auto i = 1;
   for (const auto &l : lines) {
     auto newStr = std::regex_replace(l, std::regex("oneight"), "oneeight");
     newStr = std::regex_replace(newStr, std::regex("twone"), "twoone");
@@ -90,10 +89,7 @@ void solution2() {
     }
 
     auto totStr = conv(firstStr) + conv((*last).str());
-    std::cout << std::format("{}: {} {} {}\n", i, firstStr, (*last).str(),
-                             totStr);
     sum += std::atoi(totStr.c_str());
-    i++;
   }
 
   std::cout << sum << std::endl;
